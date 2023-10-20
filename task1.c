@@ -1,10 +1,20 @@
 #include <stdio.h>
+#ifndef __cplusplus
+#include <stdbool.h>
+#endif
 
 // char firstName;
 // char lastName;
 // char username;
 // char password;
 // int age;
+union Data
+{
+    struct active
+    {
+        bool isActive;
+    } active;
+} data;
 
 struct save
 {
@@ -17,6 +27,7 @@ struct save
 
 void signup()
 {
+    union Data data;
     struct save u;
     FILE *store;
     store = fopen("save.txt", "a");
@@ -48,6 +59,8 @@ void signup()
     scanf("%s", &u.password);
     printf("Enter your age: ");
     scanf("%d", &u.age);
+    printf("type 1 or T if ur active & 0 OR F if ur not :");
+    scanf("%s", &data.active.isActive);
 
     // fprintf(save,&firstName );
     // fprintf(&us, sizeof(us), 1, save);
@@ -55,7 +68,7 @@ void signup()
     // fwrite(&u, 1, sizeof(u), store);
     // fclose(store);
 
-    fprintf(store, "%s %s %s %s %d\n", &u.firstName, &u.lastName, &u.username, &u.password, &u.age);
+    fprintf(store, "%s %s %s %s %d %s\n", &u.firstName, &u.lastName, &u.username, &u.password, &u.age, &data.active.isActive);
     printf("you signed up succesfully, now sign in");
     getch();
     system("CLS");
@@ -64,6 +77,7 @@ void signup()
 
 int login()
 {
+    union Data data;
     struct save u;
     FILE *store;
     store = fopen("save.txt", "r");
@@ -86,7 +100,6 @@ int login()
 
     printf("enter your password : ");
     scanf("%s", &password);
-    printf("you signed in succesfully");
 
     while (fread(&u, 1, sizeof(u), store))
     {
@@ -94,13 +107,24 @@ int login()
 
         if (strcmp(username, u.username) == 0 && strcmp(password, u.password) == 0)
         {
-            printf("you signed in succesfully");
+            // printf("you signed in succesfully");
+            if (data.active.isActive == 1 || data.active.isActive == 'T')
+            {
+                printf("you signed in succesfully");
+            }
+            else
+            {
+                printf("you can not sign in!");
+            }
         }
         else
         {
             printf("some credintials arent correct");
         }
     }
+
+    // printf("you signed in succesfully");
+
     fclose(store);
 
     // if (username == username && password == password)
@@ -115,6 +139,7 @@ int login()
 
 int main()
 {
+    union Data data;
     struct save u;
     int inorup;
     printf("type 0 to login OR type 1 to sign up\n");
